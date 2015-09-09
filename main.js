@@ -2,36 +2,48 @@ var http = require('http');
 var PORT = 8000;
 var server = http.createServer(function(request, response){
 
-	switch(request.url.substring(0,9)){
-		case '/math/add':
-		var addition = request.url.substring(10);
-		sumArray = addition.split('/');
-		var answer = parseInt(sumArray[0]) + parseInt(sumArray[1])
-		response.end( '<h1>' + answer + '</h1>' );
-		break;
-		
-		case '/math/min':
-		var minus = request.url.substring(12);
-		sumArray = minus.split('/');
-		var answer = parseInt(sumArray[0]) - parseInt(sumArray[1])		
-		response.end( '<h1>' + answer + '</h1>');
-		break;
+	var urlArray = request.url.split('/');
+	urlArray.shift();
+	if (urlArray[0] === 'math'){
+		urlArray.shift();
 
-		case '/math/div':
-		var divide = request.url.substring(13);
-		sumArray = divide.split('/');		
-		response.end('<h1>' + parseInt(sumArray[0]) / parseInt(sumArray[1]) + '</h1>');
+		switch(urlArray[0]){
+			case 'add':
+			urlArray.shift();
+			var answer = urlArray.reduce(function(acc, current){
+				return parseInt(acc) + parseInt(current);
+			} );
+			response.end( '<h1>' + answer + '</h1>' );
+			break;
+			
+			case 'minus':
+			urlArray.shift();
+			var answer = urlArray.reduce(function(acc, current){
+				return parseInt(acc) - parseInt(current);
+			} );		
+			response.end( '<h1>' + answer + '</h1>');
+			break;
 
-		case '/math/mul':
-		var multiply = request.url.substring(15);
-		sumArray = multiply.split('/');
-		var answer = parseInt(sumArray[0]) * parseInt(sumArray[1])		
-		response.end( '<h1>' + answer + '</h1>');
-		break;
+			case 'divide':
+			urlArray.shift();
+			var answer = urlArray.reduce(function(acc, current){
+				return parseInt(acc) / parseInt(current);
+			} );		
+			response.end( '<h1>' + answer + '</h1>');
 
-		default:
-		response.end('<h1> Enter a valid mathematical path: localhost:8000/math/[operator]/[n1]/[n2] </h1>');
+			case 'multiply':
+			urlArray.shift();
+			var answer = urlArray.reduce(function(acc, current){
+				return parseInt(acc) * parseInt(current);
+			} );		
+			response.end( '<h1>' + answer + '</h1>');
+			break;
+
+			default:
+			response.end('<h1> Enter a valid mathematical path: localhost:8000/math/[operator]/[n1]/[n2] </h1>');
+		}
 	}
+	response.end('<h1> Not a valid path </h1>');
 });
 
 server.listen(PORT, function(){
